@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beautiful Elapsed Time Clock</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #ece9e6, #ffffff);
+        }
+
+        .clock-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .real-clock {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border: 10px solid #333;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .real-clock::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            background: #333;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .clock-numbers {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em;
+            color: #333;
+        }
+
+        .clock-numbers span {
+            position: absolute;
+        }
+
+        .number12 { top: 10px; }
+        .number3 { right: 10px; }
+        .number6 { bottom: 10px; }
+        .number9 { left: 10px; }
+
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom;
+            background-color: black;
+            border-radius: 10px;
+        }
+
+        .second-hand {
+            height: 45%;
+            width: 2px;
+            background-color: red;
+            transform-origin: 100%;
+        }
+
+        .minute-hand {
+            height: 40%;
+            width: 4px;
+            background-color: #333;
+        }
+
+        .hour-hand {
+            height: 30%;
+            width: 6px;
+            background-color: #333;
+        }
+
+        .elapsed-time {
+            margin-top: 20px;
+            font-size: 1.5em;
+            color: #555;
+            text-align: center;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            .real-clock {
+                width: 200px;
+                height: 200px;
+            }
+
+            .clock-numbers {
+                font-size: 1.2em;
+            }
+
+            .second-hand {
+                height: 40%;
+                width: 1px;
+            }
+
+            .minute-hand {
+                height: 35%;
+                width: 3px;
+            }
+
+            .hour-hand {
+                height: 25%;
+                width: 4px;
+            }
+
+            .elapsed-time {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <div class="real-clock">
+            <div class="clock-numbers">
+                <span class="number12">12</span>
+                <span class="number3">3</span>
+                <span class="number6">6</span>
+                <span class="number9">9</span>
+            </div>
+            <div class="hand second-hand" id="second-hand"></div>
+            <div class="hand minute-hand" id="minute-hand"></div>
+            <div class="hand hour-hand" id="hour-hand"></div>
+        </div>
+        <div class="elapsed-time" id="elapsed-time">Loading...</div>
+    </div>
+
+    <script>
+        // Set the start date and time: July 26th, 7 PM
+        const startTime = new Date('July 26, 2024 19:00:00').getTime();
+
+        function updateElapsedTime() {
+            const now = new Date().getTime();
+            const elapsed = now - startTime;
+
+            // Calculate elapsed time in days, hours, minutes, and seconds
+            const days = Math.floor(elapsed / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((elapsed % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((elapsed % (1000 * 60)) / 1000);
+
+            // Display elapsed time
+            document.getElementById('elapsed-time').innerHTML = 
+                `${days} days, ${hours} hours, ${minutes} minutes, and ${seconds} seconds`;
+        }
+
+        function updateClockHands() {
+            const now = new Date();
+            const seconds = now.getSeconds();
+            const minutes = now.getMinutes();
+            const hours = now.getHours() % 12;
+
+            // Calculate the rotation for each hand
+            const secondRotation = seconds * 6; // 360deg / 60sec = 6deg per second
+            const minuteRotation = minutes * 6 + (seconds / 10); // Smooth transition for minute
+            const hourRotation = hours * 30 + (minutes / 2); // Smooth transition for hour
+
+            // Apply rotations
+            document.getElementById('second-hand').style.transform = `rotate(${secondRotation}deg)`;
+            document.getElementById('minute-hand').style.transform = `rotate(${minuteRotation}deg)`;
+            document.getElementById('hour-hand').style.transform = `rotate(${hourRotation}deg)`;
+        }
+
+        // Update the clock and elapsed time every second
+        setInterval(() => {
+            updateElapsedTime();
+            updateClockHands();
+        }, 1000);
+    </script>
+</body>
+</html>
