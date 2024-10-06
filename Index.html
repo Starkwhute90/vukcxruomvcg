@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elapsed Time Clock</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+
+        .clock-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .real-clock {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            border: 10px solid #333;
+            border-radius: 50%;
+            background-color: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom;
+            background-color: black;
+            border-radius: 10px;
+        }
+
+        .second-hand {
+            height: 45%;
+            width: 2px;
+            background-color: red;
+            transform-origin: 100%;
+        }
+
+        .minute-hand {
+            height: 40%;
+            width: 4px;
+        }
+
+        .hour-hand {
+            height: 30%;
+            width: 6px;
+        }
+
+        .elapsed-time {
+            margin-top: 20px;
+            font-size: 1.5em;
+            color: #555;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            .real-clock {
+                width: 180px;
+                height: 180px;
+            }
+
+            .hand {
+                border-radius: 5px;
+            }
+
+            .second-hand {
+                height: 40%;
+                width: 1px;
+            }
+
+            .minute-hand {
+                height: 35%;
+                width: 3px;
+            }
+
+            .hour-hand {
+                height: 25%;
+                width: 4px;
+            }
+
+            .elapsed-time {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <div class="real-clock">
+            <div class="hand second-hand" id="second-hand"></div>
+            <div class="hand minute-hand" id="minute-hand"></div>
+            <div class="hand hour-hand" id="hour-hand"></div>
+        </div>
+        <div class="elapsed-time" id="elapsed-time">Loading...</div>
+    </div>
+
+    <script>
+        // Set the start date and time: July 26th, 7 PM
+        const startTime = new Date('July 26, 2024 19:00:00').getTime();
+
+        function updateElapsedTime() {
+            const now = new Date().getTime();
+            const elapsed = now - startTime;
+
+            // Calculate elapsed time in days, hours, minutes, and seconds
+            const days = Math.floor(elapsed / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((elapsed % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((elapsed % (1000 * 60)) / 1000);
+
+            // Display elapsed time
+            document.getElementById('elapsed-time').innerHTML = 
+                `${days} days, ${hours} hours, ${minutes} minutes, and ${seconds} seconds`;
+        }
+
+        function updateClockHands() {
+            const now = new Date();
+            const seconds = now.getSeconds();
+            const minutes = now.getMinutes();
+            const hours = now.getHours();
+
+            // Calculate the rotation for each hand
+            const secondRotation = seconds * 6; // 360deg / 60sec = 6deg per second
+            const minuteRotation = minutes * 6 + (seconds / 10); // Account for smooth transition
+            const hourRotation = hours * 30 + (minutes / 2); // 360deg / 12hrs = 30deg per hour
+
+            // Apply rotations
+            document.getElementById('second-hand').style.transform = `rotate(${secondRotation}deg)`;
+            document.getElementById('minute-hand').style.transform = `rotate(${minuteRotation}deg)`;
+            document.getElementById('hour-hand').style.transform = `rotate(${hourRotation}deg)`;
+        }
+
+        // Update the clock and elapsed time every second
+        setInterval(() => {
+            updateElapsedTime();
+            updateClockHands();
+        }, 1000);
+    </script>
+</body>
+</html> 
